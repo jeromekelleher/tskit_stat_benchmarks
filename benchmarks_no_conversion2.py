@@ -9,7 +9,6 @@ NE = 1e4
 RHO=1e4
 RECRATE=1e3/(4*NE)
 NU = [0.1*RECRATE, RECRATE, 10*RECRATE]
-print(NU)
 
 def make_tree_sequence(nsam):
     """
