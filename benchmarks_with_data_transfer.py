@@ -30,13 +30,15 @@ def tskit_tajd(ts):
     return ts.Tajimas_D([[i for i in ts.samples()]])
 
 
-def libseq_tajd_via_genotype_matrix(gm, pos):
+def libseq_tajd_via_genotype_matrix(ts, pos):
+    gm = ts.genotype_matrix()
     vm = libsequence.VariantMatrix(gm, pos)
     ac = vm.count_alleles()
     return libsequence.tajd(ac)
 
 
-def allel_tajd(gm):
+def allel_tajd(ts):
+    gm = ts.genotype_matrix()
     ha = allel.HaplotypeArray(gm)
     ac = ha.count_alleles()
     return allel.tajima_d(ac)
@@ -53,13 +55,12 @@ for nsam in [100, 1000, 10000, 100000]:
         timer = timeit.Timer("tskit_tajd(tscopy)", globals=globals())
         res = min(timer.repeat(repeat=5, number=1))
         # g = tscopy.genotype_matrix().astype(np.int8)
-        g = tscopy.genotype_matrix()
         p = tscopy.tables.sites.position
         print(f"tskit {nsam} {tscopy.num_mutations} {Nu} {nbytes} {res}")
         timer = timeit.Timer(
-            "libseq_tajd_via_genotype_matrix(g,p)", globals=globals())
+            "libseq_tajd_via_genotype_matrix(tscopy,p)", globals=globals())
         res = min(timer.repeat(repeat=5, number=1))
         print(f"libseq {nsam} {tscopy.num_mutations} {Nu} {nbytes} {res}")
-        timer = timeit.Timer("allel_tajd(g)", globals=globals())
+        timer = timeit.Timer("allel_tajd(tscopy)", globals=globals())
         res = min(timer.repeat(repeat=5, number=1))
         print(f"allel {nsam} {tscopy.num_mutations} {Nu} {nbytes} {res}")
