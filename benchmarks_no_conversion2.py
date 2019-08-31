@@ -8,7 +8,8 @@ NE = 1e4
 #RECRATE = 1e-8
 RHO=1e4
 RECRATE=1e3/(4*NE)
-NU = [0.1*RECRATE, RECRATE, 10*RECRATE]
+# NU = [0.1*RECRATE, RECRATE, 10*RECRATE]
+NU = [RECRATE]
 
 def make_tree_sequence(nsam):
     """
@@ -43,7 +44,7 @@ def allel_tajd(gm):
 
 
 print("toolkit nsam nmutations Nu nbytes seconds")
-for nsam in [100, 1000, 10000, 100000]:
+for nsam in np.logspace(np.log10(25), np.log10(1e6), 25).astype(np.int32):
     ts = make_tree_sequence(nsam)
     for Nu in NU:  # Skip no mutation as that is obviously dumb
         tscopy = mutate_tree_sequence(ts, Nu)
